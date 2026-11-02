@@ -12,25 +12,68 @@ import { Footer } from './components/Footer';
 import { IOSGuideModal } from './components/IOSGuideModal';
 import { QrModal } from './components/QrModal';
 import { StickyBottomBar } from './components/StickyBottomBar';
+import { PrivacyPolicy } from './components/PrivacyPolicy';
 
 export function App() {
   const [isIosModalOpen, setIsIosModalOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [lang, setLang] = useState<'en' | 'si' | 'ta'>('en');
+  const [showPrivacy, setShowPrivacy] = useState(
+    window.location.pathname === '/privacy' ||
+    window.location.pathname.endsWith('/privacy.html') ||
+    window.location.hash === '#privacy'
+  );
 
   useEffect(() => {
-    // Initialize Lenis smooth momentum scrolling integrated with GSAP ScrollTrigger
-    const cleanup = initSmoothScroll();
+    const handlePopState = () => {
+      setShowPrivacy(
+        window.location.pathname === '/privacy' ||
+        window.location.pathname.endsWith('/privacy.html') ||
+        window.location.hash === '#privacy'
+      );
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+
     return () => {
-      cleanup();
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
     };
   }, []);
+
+  useEffect(() => {
+    // Only init smooth scroll on main landing page
+    if (!showPrivacy) {
+      const cleanup = initSmoothScroll();
+      return () => {
+        cleanup();
+      };
+    }
+  }, [showPrivacy]);
+
+  const handleOpenPrivacy = () => {
+    setShowPrivacy(true);
+    window.history.pushState({}, '', '#privacy');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleClosePrivacy = () => {
+    setShowPrivacy(false);
+    window.history.pushState({}, '', '/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  if (showPrivacy) {
+    return <PrivacyPolicy onBack={handleClosePrivacy} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0b0f19] text-slate-100 selection:bg-indigo-500 selection:text-white">
       {/* Navigation Header */}
       <Navbar
         onOpenIosGuide={() => setIsIosModalOpen(true)}
+        onOpenPrivacy={handleOpenPrivacy}
         lang={lang}
         setLang={setLang}
       />
@@ -68,7 +111,7 @@ export function App() {
       </main>
 
       {/* Footer */}
-      <Footer />
+      <Footer onOpenPrivacy={handleOpenPrivacy} />
 
       {/* Modals & Sticky Overlays */}
       <IOSGuideModal

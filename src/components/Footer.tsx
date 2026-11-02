@@ -2,7 +2,11 @@ import React from 'react';
 import { Code, ArrowUp, ExternalLink, ShieldCheck } from 'lucide-react';
 import { APP_CONFIG } from '../config/appConfig';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenPrivacy?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenPrivacy }) => {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -40,10 +44,24 @@ export const Footer: React.FC = () => {
             </ul>
           </div>
 
-          {/* Col 3: Downloads & Repo */}
+          {/* Col 3: Legal & Source */}
           <div>
-            <h4 className="text-sm font-bold text-white mb-3">Install & Source</h4>
+            <h4 className="text-sm font-bold text-white mb-3">Legal & Downloads</h4>
             <ul className="space-y-2">
+              <li>
+                <a
+                  href="/privacy"
+                  onClick={(e) => {
+                    if (onOpenPrivacy) {
+                      e.preventDefault();
+                      onOpenPrivacy();
+                    }
+                  }}
+                  className="hover:text-white transition-colors text-indigo-400 font-semibold"
+                >
+                  Privacy Policy
+                </a>
+              </li>
               <li>
                 <a
                   href={APP_CONFIG.downloads.playStoreUrl}
@@ -90,7 +108,22 @@ export const Footer: React.FC = () => {
 
         {/* Bottom bar */}
         <div className="pt-8 border-t border-slate-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500">
-          <p>© {new Date().getFullYear()} Smartify A/L ICT. Built for Sri Lankan Students.</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <p>© {new Date().getFullYear()} Smartify A/L ICT. Built for Sri Lankan Students.</p>
+            <span>•</span>
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                if (onOpenPrivacy) {
+                  e.preventDefault();
+                  onOpenPrivacy();
+                }
+              }}
+              className="hover:text-slate-300 underline"
+            >
+              Privacy Policy
+            </a>
+          </div>
           <div className="flex items-center gap-4">
             <button
               onClick={scrollToTop}

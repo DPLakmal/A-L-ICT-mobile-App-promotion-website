@@ -4,11 +4,12 @@ import { APP_CONFIG } from '../config/appConfig';
 
 interface NavbarProps {
   onOpenIosGuide: () => void;
+  onOpenPrivacy?: () => void;
   lang: 'en' | 'si' | 'ta';
   setLang: (lang: 'en' | 'si' | 'ta') => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onOpenIosGuide, lang, setLang }) => {
+export const Navbar: React.FC<NavbarProps> = ({ onOpenIosGuide, onOpenPrivacy, lang, setLang }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const scrollTo = (id: string) => {
@@ -58,6 +59,18 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenIosGuide, lang, setLang })
             <button onClick={() => scrollTo('faq')} className="hover:text-indigo-400 transition-colors">
               FAQ
             </button>
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                if (onOpenPrivacy) {
+                  e.preventDefault();
+                  onOpenPrivacy();
+                }
+              }}
+              className="hover:text-indigo-400 transition-colors"
+            >
+              Privacy Policy
+            </a>
           </nav>
 
           {/* Right Action buttons */}
@@ -134,6 +147,19 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenIosGuide, lang, setLang })
             <button onClick={() => scrollTo('faq')} className="text-left px-3 py-2 rounded-lg hover:bg-slate-800/60">
               FAQ
             </button>
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                setMobileMenuOpen(false);
+                if (onOpenPrivacy) {
+                  e.preventDefault();
+                  onOpenPrivacy();
+                }
+              }}
+              className="text-left px-3 py-2 rounded-lg hover:bg-slate-800/60 text-indigo-400"
+            >
+              Privacy Policy
+            </a>
           </nav>
 
           <div className="pt-3 border-t border-slate-700/60 flex items-center justify-between">
